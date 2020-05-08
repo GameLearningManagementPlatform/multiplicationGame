@@ -1,6 +1,6 @@
 var playing = false;
 var score;
-var timeRemaining;
+var timeRemaining = 10; //set game time here in seconds;
 var action;
 var correctAnswer;
 
@@ -35,7 +35,7 @@ document.getElementById("start").onclick = function(){
         show("time");
 
         //30 seconds timer
-        timeRemaining = 5;
+        // timeRemaining = 5;
         document.getElementById("remainingTime").innerHTML=timeRemaining;
 
         //hide game over box
@@ -193,7 +193,7 @@ function sendScores() {
     let xhttp = new XMLHttpRequest();
     
     let stopTime = `${today.getFullYear()}-${checkTime(today.getMonth())}-${checkTime(today.getDate())} ${checkTime(today.getHours())}:${checkTime(today.getMinutes())}:${checkTime(today.getSeconds())}`;
-    today.setSeconds(today.getSeconds()-5); //subtract timer value in seconds
+    today.setSeconds(today.getSeconds()-timeRemaining); //subtract timer value in seconds
     let startTime = today;
     startTime = `${startTime.getFullYear()}-${checkTime(startTime.getMonth())}-${checkTime(startTime.getDate())} ${checkTime(startTime.getHours())}:${checkTime(startTime.getMinutes())}:${checkTime(startTime.getSeconds())}`;
     
