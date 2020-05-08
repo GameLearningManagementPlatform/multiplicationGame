@@ -4,6 +4,10 @@ var timeRemaining;
 var action;
 var correctAnswer;
 
+let url = new URLSearchParams(window.location.search)
+let user = url.get('user');
+let id = url.get('id');
+let today;
 
 //the user clicks on the start/reset
 document.getElementById("start").onclick = function(){
@@ -31,7 +35,7 @@ document.getElementById("start").onclick = function(){
         show("time");
 
         //30 seconds timer
-        timeRemaining = 60;
+        timeRemaining = 5;
         document.getElementById("remainingTime").innerHTML=timeRemaining;
 
         //hide game over box
@@ -99,6 +103,7 @@ function startCountdown(){
         if(timeRemaining == 0)
         {//game over
             stopCountdown();
+            sendScores();
             show("gameover");
             document.getElementById("gameover").innerHTML= "<p>GAME OVER!</p><p>YOUR SCORE: " + score+ "</p>"; 
             document.getElementById("final").play();
@@ -125,7 +130,7 @@ function generateQA(){
     //to fill on if the random answer boxes with the right answer
     document.getElementById("answer"+answerBox).innerHTML=correctAnswer; 
 
-3    //storing answer choices;    
+    //storing answer choices;    
     var answers=[correctAnswer];
 
     //to fill the other answer boxes with the wrong answers   
@@ -166,10 +171,11 @@ function checkTime(i) {
       i = "0" + i;
     }
     return i;
-  }
+}
+
   
-  function startTime() {
-    var today = new Date();
+function startTime() {
+    today = new Date();
     var h = today.getHours();
     var m = today.getMinutes();
     var s = today.getSeconds();
@@ -178,11 +184,38 @@ function checkTime(i) {
     s = checkTime(s);
     document.getElementById('gameTime').innerHTML = h + ":" + m + ":" + s;
     t = setTimeout(function() {
-      startTime()
+        startTime()
     }, 500);
-  }
+    // return today;
+}
 
+function sendScores() {
+    let xhttp = new XMLHttpRequest();
+    
+    let stopTime = `${today.getFullYear()}-${checkTime(today.getMonth())}-${checkTime(today.getDate())} ${checkTime(today.getHours())}:${checkTime(today.getMinutes())}:${checkTime(today.getSeconds())}`;
+    today.setSeconds(today.getSeconds()-5); //subtract timer value in seconds
+    let startTime = today;
+    startTime = `${startTime.getFullYear()}-${checkTime(startTime.getMonth())}-${checkTime(startTime.getDate())} ${checkTime(startTime.getHours())}:${checkTime(startTime.getMinutes())}:${checkTime(startTime.getSeconds())}`;
+    
+    xhttp.responseType = 'json';
 
-  
+    xhttp.open('POST', 'https://gmlp.herokuapp.com//thirdpartyaccess/api/playerscore/')    
+    let json = JSON.stringify({
+        "user" : user,
+        "id": id,
+        "playMode": "single",
+        "startTime": startTime,
+        "endTime": stopTime,
+        "score": score,
+	    "API_KEY": "asdfghjkl"  
+    })
+    xhttp.send(json);
 
+    xhttp.onload = _ => {
+        console.log(xhttp.response.message);
+    }
 
+    xhttp.onerror = _ => {
+        console.log(xhttp.status);
+    } 
+}
