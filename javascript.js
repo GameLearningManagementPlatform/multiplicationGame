@@ -1,6 +1,6 @@
 var playing = false;
 var score;
-var timeRemaining = 10; //set game time here in seconds;
+var timeRemaining = 60; //set game time here in seconds;
 var action;
 var correctAnswer;
 
